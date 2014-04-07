@@ -12,9 +12,11 @@ module OKComputer
     #
     # Returns a hash with the status of the db
     def mongodb_stats
-      Mongoid.default_session.command(dbStats: 1) # Mongoid 3+
-    rescue
-      Mongoid.database.stats # Mongoid 2
+      if Mongoid.respond_to?(:default_session)
+        Mongoid.default_session.command(dbStats: 1) # Mongoid 3+
+      else
+        Mongoid.database.stats # Mongoid 2
+      end
     rescue => e
       raise ConnectionFailed, e
     end
