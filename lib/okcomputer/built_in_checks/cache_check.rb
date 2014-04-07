@@ -13,10 +13,11 @@ module OKComputer
 
     # Public: Outputs stats string for cache
     def stats
-      stats = Rails.cache.stats
-      mem_used = to_megabytes stats['bytes']
-      mem_max  = to_megabytes stats['limit_maxbytes']
-      return "#{mem_used} / #{mem_max} MB"
+      stats    = Rails.cache.stats
+      host     = stats.select{|k,v| k =~ Regexp.new(Socket.gethostname) }.values[0]
+      mem_used = to_megabytes host['bytes']
+      mem_max  = to_megabytes host['limit_maxbytes']
+      return "#{mem_used} / #{mem_max} MB, #{stats.count - 1} peers"
     rescue => e
       raise ConnectionFailed, e
     end

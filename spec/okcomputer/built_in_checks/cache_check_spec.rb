@@ -3,7 +3,10 @@ require "spec_helper"
 module OKComputer
   describe CacheCheck do
 
-    let(:stats) { { "bytes" => "10000000", "limit_maxbytes" => "30000000" } }
+    let(:stats) do
+      { "foo" => { "bytes" => "10000000", "limit_maxbytes" => "30000000" },
+        "bar" => { "bytes" => "40000", "limit_maxbytes" => "900000" } }
+    end
 
     it "is a Check" do
       subject.should be_a Check
@@ -36,11 +39,13 @@ module OKComputer
 
       context "when can connect to cache" do
         before do
+          stub_const("Socket", Module.new)
+          Socket.stub(:gethostname){ 'foo' }
           Rails.stub_chain(:cache, :stats){ stats }
         end
 
         it "should return a stats string" do
-          subject.stats.should eq "9 / 28 MB"
+          subject.stats.should eq "9 / 28 MB, 1 peers"
         end
       end
 
