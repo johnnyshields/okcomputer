@@ -25,6 +25,8 @@ module OkComputer
     #   default session.
     def initialize(session = :default)
       self.session = Mongoid::Sessions.with_name(session)
+    rescue => e
+      # client/session not configured
     end
 
     # Public: Return the status of the mongodb replica set

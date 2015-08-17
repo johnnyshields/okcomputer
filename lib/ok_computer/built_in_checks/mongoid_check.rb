@@ -12,6 +12,8 @@ module OkComputer
       elsif Mongoid.respond_to?(:sessions) # Mongoid 4
         self.session = Mongoid::Sessions.with_name(session)
       end
+    rescue => e
+      # client/session not configured
     end
 
     # Public: Return the status of the mongodb
